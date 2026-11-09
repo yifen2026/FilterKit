@@ -1,0 +1,36 @@
+name: Build FilterKit
+on:
+  workflow_dispatch:
+    inputs:
+      scheme:
+        description: Theos package scheme
+        required: true
+        type: choice
+        options: [roothide, rootless, rootful]
+        default: roothide
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          brew update
+          brew install ldid dpkg
+      - name: Install Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
+          echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
+      - name: Build package
+        env:
+          THEOS_PACKAGE_SCHEME: ${{ inputs.scheme }}
+        run: |
+          export PATH="$THEOS/bin:$PATH"
+          make clean
+          make package FINALPACKAGE=1
+      - name: Upload Debian package
+        uses: actions/upload-artifact@v4
+        with:
+          name: FilterKit-${{ inputs.scheme }}
+          path: packages/*.deb
+          if-no-files-found: error
