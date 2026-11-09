@@ -1,0 +1,9 @@
+Package: com.filterkit.manager
+Name: FilterKit
+Version: 0.0.1
+Architecture: iphoneos-arm64
+Description: ElleKit 插件管理器
+Maintainer: FilterKit Team
+Author: FilterKit Team
+Section: Utilities
+Depends: firmware (>= 15.0)
